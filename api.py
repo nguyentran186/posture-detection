@@ -5,34 +5,36 @@ from PIL import Image
 from flask_cors import CORS
 import random
 import cv2
+from flask_socketio import SocketIO
 
-from utils import get_predict
+from utils import get_prediction
 
 app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 CORS(app)
 
-@app.route('/api/process', methods=['POST'])
-def process():
-    print(request.files)
-    image = request.files['file']
-    image_path = 'temp.mp4'
-    image.save(image_path)
-    temp_data, pred = get_predict(image_path)
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
 
-    result_image_path = 'result.jpg'
-    cv2.imwrite(result_image_path, temp_data)
-    response_data = {
-            'image_url': f'/api/get_image/{result_image_path}',
-            'pred': pred
-        }
-    return jsonify(response_data)
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Client disconnected')
 
+@socketio.on('message')
+def handle_message(message):
+    print('Received message:', message)
 
-# Serve the processed image
-@app.route('/api/get_image/<image_path>')
-def get_image(image_path):
-    return send_file(image_path, mimetype='image/jpeg')
+@socketio.on('pose_landmarks')
+def handle_pose_landmarks(data):
+    pred = get_prediction(data)
+    print(pred)
+    socketio.emit('response', pred)
+
+def process_pose_landmarks(data):
+    # Dummy processing function, replace with your actual processing logic
+    return {'message': 'Processed pose landmarks'}
 
 if __name__ == '__main__':
-    app.run(debug=True, port = 5000)
+    socketio.run(app, port = 5000)

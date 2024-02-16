@@ -6,13 +6,11 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
-target_lm_idx = [0, 2, 5, 9, 10, 11, 12]
+target_lm_idx = [0, 2, 5, 9, 10, 11, 12, 13, 14, 23, 24]
 lm_results = []
 data_count = {
-    'excellent': 0,
-    'okay': 0,
+    'good': 0,
     'bad': 0,
-    'terrible': 0,
 }
 
 # For webcam input:
@@ -51,12 +49,6 @@ with mp_pose.Pose(
         lm_result.append(results.pose_landmarks.landmark[lm_idx].z)
         lm_result.append(results.pose_landmarks.landmark[lm_idx].visibility)
     cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
-    if cv2.waitKey(33) == ord('a'):
-        # Excellent Posture
-        lm_result.append(0)
-        lm_results.append(np.array(lm_result))
-        data_count['excellent'] += 1
-        print("Excellent posture collected, total =", data_count['excellent'])
     if cv2.waitKey(33) == ord('b'):
         # Okay Posture
         lm_result.append(1)
@@ -69,12 +61,6 @@ with mp_pose.Pose(
         lm_results.append(np.array(lm_result))
         data_count['bad'] += 1
         print("Bad posture collected, total =", data_count['bad'])
-    if cv2.waitKey(33) == ord('d'):
-        # Terrible Posture
-        lm_result.append(3)
-        lm_results.append(np.array(lm_result))
-        data_count['terrible'] += 1
-        print("Terrible posture collected, total =", data_count['terrible'])
     if cv2.waitKey(5) & 0xFF == 27:
       break
 cap.release()

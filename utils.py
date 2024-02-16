@@ -11,6 +11,28 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 target_lm_idx = [0, 2, 5, 9, 10, 11, 12]
 
+def get_prediction(keypoint):
+    if len(keypoint) < 1: return "not found"
+    if keypoint is not None:
+        # Flip the image horizontally for a selfie-view display.
+        lm_result = []
+        for lm_idx in target_lm_idx:
+            lm_result.append(keypoint[lm_idx]['x'])
+            lm_result.append(keypoint[lm_idx]['y'])
+            lm_result.append(keypoint[lm_idx]['z'])
+            lm_result.append(keypoint[lm_idx]['visibility'])
+        lm_result = np.array(lm_result)[None, :]
+        pred = clf.predict(lm_result)[0]
+        if pred == 0:
+            prediction = 'Excellent Posture'
+        if pred == 1:
+            prediction = 'Okay Posture'
+        if pred == 2:
+            prediction = 'Bad Posture'
+        if pred == 3:
+            prediction = 'Terrible Posture'
+        return prediction
+    return "done"
 def get_predict(images):
     image = cv2.imread(images)
     with mp_pose.Pose(
