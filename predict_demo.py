@@ -3,7 +3,7 @@ import mediapipe as mp
 import pickle
 import numpy as np
 
-model_file = 'model.sav'
+model_file = 'best_pipe.bin'
 
 clf = pickle.load(open(model_file, 'rb'))
 
@@ -12,8 +12,10 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 target_lm_idx = [0, 2, 5, 9, 10, 11, 12]
 
+
+video_path = 'D:\download\ClassroomActivity\ClassroomActivity\Writting_on_Textbook\Writting_on_Textbook_006.mp4'
 # For webcam input:
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(video_path)
 with mp_pose.Pose(
     model_complexity=1,
     min_detection_confidence=0.5,
@@ -23,7 +25,7 @@ with mp_pose.Pose(
     if not success:
       print("Ignoring empty camera frame.")
       # If loading a video, use 'break' instead of 'continue'.
-      continue
+      break
 
     # To improve performance, optionally mark the image as not writeable to
     # pass by reference.

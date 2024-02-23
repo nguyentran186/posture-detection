@@ -3,7 +3,7 @@ import mediapipe as mp
 import pickle
 import numpy as np
 
-model_file = 'model.sav'
+model_file = 'best_pipe.bin'
 clf = pickle.load(open(model_file, 'rb'))
 
 mp_drawing = mp.solutions.drawing_utils
